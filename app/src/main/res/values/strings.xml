@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TaskApp</string>
+    <string name="task_list_heading">Task List</string>
+    <string name="add_task">Add Task</string>
 </resources>
