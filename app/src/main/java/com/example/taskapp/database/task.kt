@@ -8,8 +8,7 @@ data class Task(
     var title: String?,
     var date: String?,
     var time: String?,
-    var description: String?,
-    var isCompleted: String?,
+    var status: String?,
 ){
     @PrimaryKey(autoGenerate = true)
     var id:Int?=null
