@@ -22,7 +22,7 @@ class GeneralActivity : AppCompatActivity() {
         val all_btn:Button=findViewById(R.id.all_task_btn)
         val add_btn:Button=findViewById(R.id.add_task_btn)
 
-
+        loadAllTasks()
 
         all_btn.setOnClickListener{
             loadAllTasks()

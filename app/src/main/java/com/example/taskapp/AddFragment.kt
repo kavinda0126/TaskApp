@@ -8,6 +8,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.taskapp.R
 import com.example.taskapp.database.Task
 import com.example.taskapp.database.TaskDB
@@ -16,8 +17,12 @@ import com.example.taskapp.viewModel.MainActivityData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import kotlin.time.Duration
+import kotlinx.coroutines.delay
+
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -44,6 +49,7 @@ class AddFragment : Fragment() {
         val titleEditText: EditText = view.findViewById(R.id.titleEditText)
         val dateEditText: EditText = view.findViewById(R.id.dateEditText)
         val timeEditText: EditText = view.findViewById(R.id.timeEditText)
+        val descEditText:EditText=view.findViewById(R.id.desc_edittext)
         val add_btn: Button = view.findViewById(R.id.add_btn)
         val cancel_btn: Button = view.findViewById(R.id.cancel_btn)
 
@@ -57,23 +63,34 @@ class AddFragment : Fragment() {
             val title = titleEditText.text.toString()
             val date = dateEditText.text.toString()
             val time = timeEditText.text.toString()
-            val status = "inprogress"
+            val status = descEditText.text.toString()
             val formData = Task(title, date, time, status)
 
             // Assuming 'repository' is your repository instance
             CoroutineScope(Dispatchers.IO).launch {
-                repository.insert(formData)
-                val data = repository.getAllItems()
+                try {
+                    repository.insert(formData)
 
-                withContext(Dispatchers.Main) {
-                    viewModel.setData(data)
-                    showAlert("Task added successfully")
+                    val data = repository.getAllItems()
 
-                    titleEditText.text.clear()
-                    dateEditText.text.clear()
-                    timeEditText.text.clear()
+                    withContext(Dispatchers.Main) {
+                        titleEditText.text.clear()
+                        dateEditText.text.clear()
+                        timeEditText.text.clear()
+                        descEditText.text.clear()
+
+                        viewModel.setData(data)
+                        showAlert("Task added successfully")
+
+
+
+                    }
+                } catch (e: Exception) {
+                    // Handle the exception here
+                    e.printStackTrace()
                 }
             }
+
         }
 
         return view
@@ -108,14 +125,22 @@ class AddFragment : Fragment() {
         val mHour = c.get(Calendar.HOUR_OF_DAY)
         val mMinute = c.get(Calendar.MINUTE)
 
-        val timePickerDialog = TimePickerDialog(requireContext(),
+        val timePickerDialog = TimePickerDialog(
+            requireContext(),
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                // Format the minute to always display two digits
+                val formattedMinute = String.format("%02d", minute)
                 // Set the selected time to the EditText
                 val timeEditText: EditText? = view?.findViewById(R.id.timeEditText)
-                timeEditText?.setText("$hourOfDay:$minute")
-            }, mHour, mMinute, false)
+                timeEditText?.setText("$hourOfDay:$formattedMinute")
+            },
+            mHour,
+            mMinute,
+            false
+        )
         timePickerDialog.show()
     }
+
 
     companion object {
         @JvmStatic
