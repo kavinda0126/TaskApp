@@ -100,11 +100,12 @@ class TaskAdapter(private val items: List<Task>, private val repository: TaskRep
         timeEditText.setOnClickListener {
             val calendar = Calendar.getInstance()
             val timePickerDialog = TimePickerDialog(context!!, { _, hourOfDay, minute ->
-                val selectedTime = "$hourOfDay:$minute"
+                val selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute)
                 timeEditText.setText(selectedTime)
             }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false)
             timePickerDialog.show()
         }
+
 
         val alertDialogBuilder = AlertDialog.Builder(context!!)
         alertDialogBuilder.setView(dialogView)
